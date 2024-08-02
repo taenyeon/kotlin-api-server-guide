@@ -1,0 +1,115 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+:doctype: book
+:icons: font
+:source-highlighter: highlight.js
+:table-caption!:
+= 🚀 API
+:toc: left
+:toc-title: 🚀 API
+:toclevels: 4
+:sectlinks:
+
+== 공통 headers
+[%autowidth]
+|===
+|Name|Description|optional
+
+	|access_token
+	|JWT accessToken
+	|
+
+	|refresh_token
+	|JWT refreshToken (accessToken이 만료된 경우, 재발급 용도로 사용)
+	|
+
+|===
+
+== 유저 API
+=== 유저 회원가입
+*Request*
+
+.path parameter
+
+include::{snippets}/user-join/path-parameters.adoc[]
+
+.sample
+
+include::{snippets}/user-join/http-request.adoc[]
+
+*Response*
+
+.response body
+
+include::{snippets}/user-join/http-response.adoc[]
+
+.sample
+
+include::{snippets}/user-join/response-fields.adoc[]
+
+=== 유저 로그인
+*Request*
+
+.path parameter
+
+include::{snippets}/user-login/path-parameters.adoc[]
+
+.sample
+
+include::{snippets}/user-login/http-request.adoc[]
+
+*Response*
+
+.response body
+
+include::{snippets}/user-login/http-response.adoc[]
+
+.sample
+
+include::{snippets}/user-login/response-fields.adoc[]
+
+=== 유저 로그아웃
+*Request*
+
+.path parameter
+
+include::{snippets}/user-logout/path-parameters.adoc[]
+
+.sample
+
+include::{snippets}/user-logout/http-request.adoc[]
+
+*Response*
+
+.response body
+
+include::{snippets}/user-logout/http-response.adoc[]
+
+.sample
+
+include::{snippets}/user-logout/response-fields.adoc[]
+
+== 회원 API
+=== 회원 조회
+*Request*
+
+.path parameter
+
+include::{snippets}/user-find/path-parameters.adoc[]
+
+.sample
+
+include::{snippets}/user-find/http-request.adoc[]
+
+*Response*
+
+.response body
+
+include::{snippets}/user-find/http-response.adoc[]
+
+.sample
+
+include::{snippets}/user-find/response-fields.adoc[]
+
