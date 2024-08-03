@@ -53,34 +53,30 @@ class UserControllerDocs : BaseDocs() {
         result
             .andDo(MockMvcResultHandlers.print())
             .andDo(
-            document(
-                "user-join",
-                super.restDocsUtils.getDocumentRequest(),
-                super.restDocsUtils.getDocumentResponse(),
-                requestBody(),
-                requestFields(
-                    attributes(
-                        key(DocsAttributeKeys.DEPTH.code + 1).value("")
+                document(
+                    "user-join",
+                    super.restDocsUtils.getDocumentRequest(),
+                    super.restDocsUtils.getDocumentResponse(),
+                    requestFields(
+                        attributes(key(DocsAttributeKeys.DEPTH.code + 1).value("")),
+                        "name" type STRING means "회원 이름",
+                        "username" type STRING means "로그인 ID",
+                        "password" type STRING means "로그인 PWD",
+                        "phoneNumber" type STRING means "회원 전화번호",
                     ),
-                    "name" type STRING means "회원 이름",
-                    "username" type STRING means "로그인 ID",
-                    "password" type STRING means "로그인 PWD",
-                    "phoneNumber" type STRING means "회원 전화번호",
-                ),
-                responseFields(
-                    attributes(
-                        key(DocsAttributeKeys.DEPTH.code + 1).value(""),
-                        key(DocsAttributeKeys.DEPTH.code + 2).value(""),
-                    ),
-                    "resultCode" type STRING means "결과 코드",
-                    "resultMessage" type STRING means "결과 메세지",
-                    *"body" type OBJECT means "결과" fields
-                            arrayOf(
-                                "body.id" type NUMBER means "회원 SEQ"
-                            ),
+                    responseFields(
+                        attributes(
+                            key(DocsAttributeKeys.DEPTH.code + 1).value(""),
+                            key(DocsAttributeKeys.DEPTH.code + 2).value(""),
+                        ),
+                        *super.restDocsUtils.getDocumentCommonResult(),
+                        *"body" type OBJECT means "결과" fields
+                                arrayOf(
+                                    "body.id" type NUMBER means "회원 SEQ"
+                                ),
+                    )
                 )
             )
-        )
     }
 
     @Test
@@ -112,9 +108,7 @@ class UserControllerDocs : BaseDocs() {
                     super.restDocsUtils.getDocumentRequest(),
                     super.restDocsUtils.getDocumentResponse(),
                     requestFields(
-                        attributes(
-                            key(DocsAttributeKeys.DEPTH.code + 1).value(""),
-                        ),
+                        attributes(key(DocsAttributeKeys.DEPTH.code + 1).value("")),
                         "username" type STRING means "로그인 ID",
                         "password" type STRING means "로그인 PWD",
                     ),
@@ -123,8 +117,7 @@ class UserControllerDocs : BaseDocs() {
                             key(DocsAttributeKeys.DEPTH.code + 1).value(""),
                             key(DocsAttributeKeys.DEPTH.code + 2).value("")
                         ),
-                        "resultCode" type STRING means "결과 코드",
-                        "resultMessage" type STRING means "결과 메세지",
+                        *super.restDocsUtils.getDocumentCommonResult(),
                         *"body" type OBJECT means "결과" fields
                                 arrayOf(
                                     "body.accessToken" type STRING means "JWT accessToken",

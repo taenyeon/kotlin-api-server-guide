@@ -1,5 +1,8 @@
 package com.example.kotlinapiserverguide.restDocs.util
 
+import com.example.kotlinapiserverguide.restDocs.constant.DocsField
+import com.example.kotlinapiserverguide.restDocs.constant.STRING
+import com.example.kotlinapiserverguide.restDocs.infix.type
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
@@ -14,19 +17,25 @@ class RestDocsUtils {
 
     fun getDocumentRequest(): OperationRequestPreprocessor {
         return preprocessRequest(
-            modifyUris() // (1)
-                .scheme("https")
-                .host("docs.api.com")
-                .removePort(),
+            modifyUris()
+                .host("localhost")
+                .port(8080),
             modifyHeaders()
                 .add("access_token", "access_token_value")
                 .add("refresh_token", "refresh_token_value"),
             prettyPrint()
-        ) // (2)
+        )
     }
 
     fun getDocumentResponse(): OperationResponsePreprocessor {
-        return preprocessResponse(prettyPrint()) // (3)
+        return preprocessResponse(prettyPrint())
+    }
+
+    fun getDocumentCommonResult(): Array<DocsField> {
+        return arrayOf(
+            "resultCode" type STRING means "결과 코드",
+            "resultMessage" type STRING means "결과 메세지",
+        )
     }
 
 }

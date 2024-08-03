@@ -1,5 +1,7 @@
 package com.example.kotlinapiserverguide.restDocs.util
 
+import com.example.kotlinapiserverguide.common.exception.ResponseException
+import com.example.kotlinapiserverguide.common.http.constant.ResponseCode
 import com.example.kotlinapiserverguide.restDocs.constant.DocsApi
 import com.example.kotlinapiserverguide.restDocs.constant.DocsApiType
 import java.io.File
@@ -7,15 +9,27 @@ import java.io.FileOutputStream
 
 class RestDocsGenerator {
 
-    var apiDefaultPath = "{snippets}"
+    private var apiDefaultPath = "{snippets}"
 
-    var pathParameterTemplate = "/path-parameters.adoc[]"
-    var httpRequestTemplate = "/http-request.adoc[]"
-    var httpResponseTemplate = "/response-fields.adoc[]"
-    var responseFieldsTemplate = "/http-response.adoc[]"
+    private var pathParameterTemplate = "path-parameters.adoc"
+    private var httpRequestTemplate = "http-request.adoc"
+    private var requestFieldsTemplate = "request-fields.adoc"
+    private var httpResponseTemplate = "http-response.adoc"
+    private var responseFieldsTemplate = "response-fields.adoc"
+    private val curlRequestTemplate = "curl-request.adoc"
 
     fun generateTemplate() {
-        val docs = File("src/docs/asciidoc/apiDocs.adoc")
+        val docs: File = File("src/docs/asciidoc/apiDocs.adoc")
+
+        val snippetsDir = File("build/generated-snippets")
+
+        val snippetFiles = snippetsDir.listFiles() ?: emptyArray()
+
+        if (!snippetsDir.exists() || !snippetsDir.isDirectory || snippetFiles.isEmpty()) throw ResponseException(
+            ResponseCode.NOT_FOUND_ERROR
+        )
+
+        val snippetNames: List<String> = snippetFiles.map { snippet -> snippet.name }
 
         val stringBuilder = StringBuilder()
         stringBuilder
@@ -26,8 +40,9 @@ class RestDocsGenerator {
             .append(":snippets: ./build/generated-snippets")
             .append(System.lineSeparator())
             .append("endif::[]")
-            .append(System.lineSeparator())
 
+            // 구분자
+            .append(System.lineSeparator())
             .append(System.lineSeparator())
 
             // Ascii Docs 서식
@@ -48,57 +63,60 @@ class RestDocsGenerator {
             .append(":toclevels: 4")
             .append(System.lineSeparator())
             .append(":sectlinks:")
-            .append(System.lineSeparator())
 
+            // 구분자
+            .append(System.lineSeparator())
             .append(System.lineSeparator())
 
         // 공통 header
         buildDocsCommonHeader(stringBuilder)
 
-        DocsApiType.entries.forEach { type ->
-            stringBuilder
-                .append(buildHeader(type.description, 2))
-                .append(System.lineSeparator())
+        // 공통 responseCode
+        buildDocsCommonResponseCode(stringBuilder)
 
-            DocsApi.entries.filter { it.docsApiType == type }
-                .forEach { api ->
-                    val apiPath = apiDefaultPath + api.directoryName
-                    stringBuilder
-                        .append(buildHeader(api.description, 3))
-                        .append(System.lineSeparator())
-                        .append(buildHighlight("Request"))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildTemplateTitle("path parameter"))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildTemplate(apiPath, pathParameterTemplate))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildTemplateTitle("sample"))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildTemplate(apiPath, httpRequestTemplate))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildHighlight("Response"))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildTemplateTitle("response body"))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildTemplate(apiPath, responseFieldsTemplate))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildTemplateTitle("sample"))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
-                        .append(buildTemplate(apiPath, httpResponseTemplate))
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator())
+        // API 목록
+        DocsApiType.entries
+            .forEach { type ->
+                stringBuilder
+                    .append(buildHeader(type.description, 2))
+                    .append(System.lineSeparator())
 
-                }
-        }
+                DocsApi.entries.filter { it.docsApiType == type }
+                    .filter { snippetNames.contains(it.directoryName) }
+                    .forEach { api ->
+
+                        stringBuilder
+                            .append(buildHeader(api.title, 3))
+
+                            .append(System.lineSeparator())
+                            .append(".${api.description}")
+
+                            .append(System.lineSeparator())
+                            .append(System.lineSeparator())
+
+                        buildCurlRequestTemplate(stringBuilder, api.directoryName)
+
+                        stringBuilder
+                            .append(buildHighlight("Request"))
+                            .append(System.lineSeparator())
+                            .append(System.lineSeparator())
+
+                        buildPathParameterTemplate(stringBuilder, api.directoryName)
+
+                        buildRequestFieldsTemplate(stringBuilder, api.directoryName)
+
+                        buildRequestSampleTemplate(stringBuilder, api.directoryName)
+
+                        stringBuilder
+                            .append(buildHighlight("Response"))
+                            .append(System.lineSeparator())
+                            .append(System.lineSeparator())
+
+                        buildResponseFieldsTemplate(stringBuilder, api.directoryName)
+
+                        buildResponseSampleTemplate(stringBuilder, api.directoryName)
+                    }
+            }
 
         try {
             val fileOutputStream = FileOutputStream(docs)
@@ -143,10 +161,39 @@ class RestDocsGenerator {
         return stringBuilder
     }
 
+    private fun buildDocsCommonResponseCode(stringBuilder: StringBuilder): StringBuilder {
+        stringBuilder
+            .append("== 공통 ResponseCode")
+            .append(System.lineSeparator())
+            .append("[%autowidth]")
+            .append(System.lineSeparator())
+            .append("|===")
+            .append(System.lineSeparator())
+            .append("|Code|Description")
+            .append(System.lineSeparator())
+            .append(System.lineSeparator())
+
+        ResponseCode.entries.forEach {
+            stringBuilder
+                .append("\t|${it.code}")
+                .append(System.lineSeparator())
+                .append("\t|${it.message}")
+                .append(System.lineSeparator())
+                .append(System.lineSeparator())
+        }
+
+        stringBuilder
+            .append(System.lineSeparator())
+            .append(System.lineSeparator())
+            .append("|===")
+            .append(System.lineSeparator())
+
+            .append(System.lineSeparator())
+        return stringBuilder
+    }
+
     private fun buildHeader(text: String, depth: Int): String {
-        val s = "=".repeat(depth) + " " + text
-        println(s)
-        return s
+        return "=".repeat(depth) + " " + text
     }
 
     private fun buildHighlight(text: String): String {
@@ -158,6 +205,120 @@ class RestDocsGenerator {
     }
 
     private fun buildTemplate(path: String, template: String): String {
-        return "include::$path$template"
+        return "include::$path/$template[]"
+    }
+
+    private fun isTemplateExist(snippetDir: String, template: String): Boolean {
+        return File(snippetDir + template).exists()
+
+    }
+
+    private fun buildPathParameterTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
+        val apiPath = "$apiDefaultPath/$directoryName"
+        val snippetDir = "build/generated-snippets/${directoryName}/"
+
+        if (isTemplateExist(snippetDir, pathParameterTemplate)) buildTemplate(
+            stringBuilder,
+            "path parameter",
+            apiPath,
+            pathParameterTemplate
+        )
+
+        return stringBuilder
+    }
+
+    private fun buildRequestFieldsTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
+        val apiPath = "$apiDefaultPath/$directoryName"
+        val snippetDir = "build/generated-snippets/${directoryName}/"
+
+        if (isTemplateExist(snippetDir, requestFieldsTemplate)) buildTemplate(
+            stringBuilder,
+            "request body",
+            apiPath,
+            requestFieldsTemplate
+        )
+
+        return stringBuilder
+    }
+
+    private fun buildRequestSampleTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
+        val apiPath = "$apiDefaultPath/$directoryName"
+        val snippetDir = "build/generated-snippets/${directoryName}/"
+
+        if (isTemplateExist(snippetDir, httpRequestTemplate)) buildSampleTemplate(
+            stringBuilder,
+            "sample",
+            apiPath,
+            httpRequestTemplate
+        )
+
+        return stringBuilder
+    }
+
+    private fun buildResponseFieldsTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
+        val apiPath = "$apiDefaultPath/$directoryName"
+        val snippetDir = "build/generated-snippets/${directoryName}/"
+
+        if (isTemplateExist(snippetDir, responseFieldsTemplate)) buildTemplate(
+            stringBuilder,
+            "response body",
+            apiPath,
+            responseFieldsTemplate
+        )
+
+        return stringBuilder
+    }
+
+    private fun buildResponseSampleTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
+        val apiPath = "$apiDefaultPath/$directoryName"
+        val snippetDir = "build/generated-snippets/${directoryName}/"
+
+        if (isTemplateExist(snippetDir, httpResponseTemplate)) buildTemplate(
+            stringBuilder,
+            "sample",
+            apiPath,
+            httpResponseTemplate
+        )
+
+        return stringBuilder
+    }
+
+    private fun buildCurlRequestTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
+        val apiPath = "$apiDefaultPath/$directoryName"
+        val snippetDir = "build/generated-snippets/${directoryName}/"
+        if (isTemplateExist(snippetDir, curlRequestTemplate)) buildTemplate(
+            stringBuilder,
+            "curl",
+            apiPath,
+            curlRequestTemplate
+        )
+
+        return stringBuilder
+    }
+
+    private fun buildTemplate(stringBuilder: StringBuilder, title: String, apiPath: String, template: String) {
+        stringBuilder
+            .append(buildTemplateTitle(title))
+            .append(System.lineSeparator())
+            .append(System.lineSeparator())
+            .append(buildTemplate(apiPath, template))
+            .append(System.lineSeparator())
+            .append(System.lineSeparator())
+    }
+
+    private fun buildSampleTemplate(stringBuilder: StringBuilder, title: String, apiPath: String, template: String) {
+        stringBuilder
+            .append(buildTemplateTitle(title))
+            .append(System.lineSeparator())
+            .append(System.lineSeparator())
+            .append("[%collapsible]")
+            .append(System.lineSeparator())
+            .append("====")
+            .append(System.lineSeparator())
+            .append(buildTemplate(apiPath, template))
+            .append(System.lineSeparator())
+            .append("====")
+            .append(System.lineSeparator())
+            .append(System.lineSeparator())
     }
 }

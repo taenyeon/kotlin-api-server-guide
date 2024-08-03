@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
-    url: jdbc:mysql://localhost:3306/chat_center
+    url: jdbc:mysql://localhost:3306/test
     hikari:
       connection-timeout: 5000
       validation-timeout: 1000
@@ -26,11 +26,3 @@ spring:
     redis:
       host: localhost
       port: 6379
-    mongodb:
-      host: localhost
-      port: 27017
-      database: test
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: chat-service

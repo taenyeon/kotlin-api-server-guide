@@ -27,72 +27,123 @@ endif::[]
 
 |===
 
+== 공통 ResponseCode
+[%autowidth]
+|===
+|Code|Description
+
+	|SUCCESS
+	|success.
+
+	|INVALID_TOKEN_ERROR
+	|invalid token error occurred.
+
+	|WRONG_PASSWORD_ERROR
+	|wrong password error occurred.
+
+	|ALREADY_LOGOUT_ERROR
+	|already logout error occurred.
+
+	|AUTH_ERROR
+	|auth error occurred.
+
+	|ACCESS_DENIED_ERROR
+	|access denied error occurred.
+
+	|EXIST_MEMBER
+	|already member error occurred.
+
+	|UNKNOWN_ERROR
+	|unknown error occurred.
+
+	|MANUAL_ERROR
+	|manual error occurred.
+
+	|NOT_FOUNT_ERROR
+	|not found error occurred.
+
+	|INVALID_REQUEST_PARAM
+	|invalid request parameter error occurred.
+
+	|ENCRYPT_ERROR
+	|encrypt error occurred
+
+	|DECRYPT_ERROR
+	|decrypt error occurred
+
+
+
+|===
+
 == 유저 API
 === 유저 회원가입
+.유저 회원가입을 한다.
+
+.curl
+
+include::{snippets}/user-join/curl-request.adoc[]
+
 *Request*
 
-.path parameter
+.request body
 
-include::{snippets}/user-join/path-parameters.adoc[]
+include::{snippets}/user-join/request-fields.adoc[]
 
 .sample
 
+[%collapsible]
+====
 include::{snippets}/user-join/http-request.adoc[]
+====
 
 *Response*
 
 .response body
-
-include::{snippets}/user-join/http-response.adoc[]
-
-.sample
 
 include::{snippets}/user-join/response-fields.adoc[]
 
+.sample
+
+include::{snippets}/user-join/http-response.adoc[]
+
 === 유저 로그인
+.유저 로그인을 시도한다.
+
+.curl
+
+include::{snippets}/user-login/curl-request.adoc[]
+
 *Request*
 
-.path parameter
+.request body
 
-include::{snippets}/user-login/path-parameters.adoc[]
+include::{snippets}/user-login/request-fields.adoc[]
 
 .sample
 
+[%collapsible]
+====
 include::{snippets}/user-login/http-request.adoc[]
+====
 
 *Response*
 
 .response body
-
-include::{snippets}/user-login/http-response.adoc[]
-
-.sample
 
 include::{snippets}/user-login/response-fields.adoc[]
 
-=== 유저 로그아웃
-*Request*
-
-.path parameter
-
-include::{snippets}/user-logout/path-parameters.adoc[]
-
 .sample
 
-include::{snippets}/user-logout/http-request.adoc[]
-
-*Response*
-
-.response body
-
-include::{snippets}/user-logout/http-response.adoc[]
-
-.sample
-
-include::{snippets}/user-logout/response-fields.adoc[]
+include::{snippets}/user-login/http-response.adoc[]
 
 == 회원 API
-=== 회원 조회
+=== 회원 조회(로그인 ID)
+.로그인 ID로 회원을 조회한다.
+
+.curl
+
+include::{snippets}/user-find/curl-request.adoc[]
+
 *Request*
 
 .path parameter
@@ -101,15 +152,18 @@ include::{snippets}/user-find/path-parameters.adoc[]
 
 .sample
 
+[%collapsible]
+====
 include::{snippets}/user-find/http-request.adoc[]
+====
 
 *Response*
 
 .response body
 
-include::{snippets}/user-find/http-response.adoc[]
+include::{snippets}/user-find/response-fields.adoc[]
 
 .sample
 
-include::{snippets}/user-find/response-fields.adoc[]
+include::{snippets}/user-find/http-response.adoc[]
 
