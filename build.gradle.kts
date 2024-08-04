@@ -7,6 +7,7 @@ plugins {
     kotlin("kapt") version "1.7.10"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     idea
+    jacoco
 }
 
 group = "com.example"
@@ -39,10 +40,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.0.4")
 
     // QUERY_DSL
-    implementation ("com.querydsl:querydsl-jpa:5.0.0:jakarta")
-    kapt ("com.querydsl:querydsl-apt:5.0.0:jakarta")
-    kapt ("jakarta.annotation:jakarta.annotation-api")
-    kapt ("jakarta.persistence:jakarta.persistence-api")
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    kapt("jakarta.annotation:jakarta.annotation-api")
+    kapt("jakarta.persistence:jakarta.persistence-api")
 
     // DATABASE
     runtimeOnly("com.mysql:mysql-connector-j:8.0.32")
@@ -69,9 +70,10 @@ dependencies {
 
     // TEST
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation ("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("io.mockk:mockk:1.9.3")
 
     // MAPPING
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
@@ -82,8 +84,6 @@ dependencies {
     implementation("com.github.consoleau:kassava:2.1.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-//    implementation("org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2")
 
 }
 
@@ -112,7 +112,6 @@ idea {
     }
 }
 
-val snippetsDir by extra { file("build/generated-snippets") }
 
 
 allOpen {
@@ -125,24 +124,52 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+// ascii docs
+val snippetsDir by extra { file("build/generated-snippets") }
+
 tasks {
-    // Test 결과를 snippet Directory에 출력
     test {
         outputs.dir(snippetsDir)
+        finalizedBy(jacocoTestReport)
+    }
+
+    jacocoTestReport {
+        reports {
+
+            html.required = true
+            xml.required = false
+            csv.required = false
+            val excludes = mutableListOf<String>()
+
+            classDirectories.setFrom(
+                sourceSets.main.get().output.asFileTree.matching {
+                    exclude(excludes)
+                }
+            )
+        }
+
+//        jacocoTestCoverageVerification{
+//            violationRules {
+//                rule {
+//                    element = "CLASS"
+//                    limit {
+//                        counter = "BRANCH"
+//                        value = "COVEREDRATIO"
+//                        minimum = BigDecimal.valueOf(0.40)
+//                    }
+//                }
+//            }
+//        }
     }
 
     asciidoctor {
-        // test 가 성공해야만, 아래 Task 실행
         dependsOn(test)
 
-        // 기존에 존재하는 Docs 삭제(문서 최신화를 위해)
         doFirst {
             delete(file("src/main/resources/static/docs"))
         }
-        // snippet Directory 설정
         inputs.dir(snippetsDir)
 
-        // Ascii Doc 파일 생성
         doLast {
             copy {
                 from("build/docs/asciidoc")
@@ -152,7 +179,7 @@ tasks {
     }
 
     build {
-        // Ascii Doc 파일 생성이 성공해야만, Build 진행
         dependsOn(asciidoctor)
     }
 }
+
