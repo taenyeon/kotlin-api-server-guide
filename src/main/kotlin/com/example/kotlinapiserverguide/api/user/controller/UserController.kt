@@ -37,11 +37,11 @@ class UserController(
     }
 
     @DeleteMapping("/logout")
-    fun logout(): ApiResponse<Unit> {
+    fun logout(): ApiResponse<Nothing?> {
         val user = user()
         log.info("logoutUser - id : ${user.id}")
         userService.logout(user.id!!)
-        return ApiResponse()
+        return ApiResponse(null)
     }
 
     @PostMapping("/accessToken")

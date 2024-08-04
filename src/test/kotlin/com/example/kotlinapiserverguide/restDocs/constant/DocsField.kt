@@ -8,7 +8,7 @@ open class DocsField(path: String?) : FieldDescriptor(path) {
     var depth: Int = 1
 
     init {
-        this.attributes(DocsAttributeKeys.DEPTH.depth(this.depth, this.path))
+        this.attributes(DocsAttributeKeys.DEPTH.set(this.depth, this.path))
     }
 
     protected open var default: String
@@ -70,8 +70,8 @@ open class DocsField(path: String?) : FieldDescriptor(path) {
         fields.forEach {
             it.depth = fieldDepth
             val name = it.path.split(".").last()
-            it.attributes(DocsAttributeKeys.DEPTH.depth(parentsDepth,"" ))
-            it.attributes(DocsAttributeKeys.DEPTH.depth(fieldDepth, name))
+            it.attributes(DocsAttributeKeys.DEPTH.set(parentsDepth,"-" ))
+            it.attributes(DocsAttributeKeys.DEPTH.set(fieldDepth, name))
         }
         return arrayOf(this, *fields)
     }

@@ -5,6 +5,8 @@ import com.example.kotlinapiserverguide.api.user.domain.dto.User
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import com.example.kotlinapiserverguide.api.user.domain.mapper.UserMapper
+import com.example.kotlinapiserverguide.common.exception.ResponseException
+import com.example.kotlinapiserverguide.common.http.constant.ResponseCode
 import com.example.kotlinapiserverguide.common.util.EncryptUtil
 
 // LOGGING

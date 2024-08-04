@@ -1,6 +1,5 @@
 package com.example.kotlinapiserverguide.restDocs.util
 
-import com.example.kotlinapiserverguide.common.exception.ResponseException
 import com.example.kotlinapiserverguide.common.http.constant.ResponseCode
 import com.example.kotlinapiserverguide.restDocs.constant.DocsApi
 import com.example.kotlinapiserverguide.restDocs.constant.DocsApiType
@@ -9,31 +8,25 @@ import java.io.FileOutputStream
 
 class RestDocsGenerator {
 
-    private var apiDefaultPath = "{snippets}"
+    private val defaultUri: String = "localhost:8080"
 
-    private var pathParameterTemplate = "path-parameters.adoc"
-    private var httpRequestTemplate = "http-request.adoc"
-    private var requestFieldsTemplate = "request-fields.adoc"
-    private var httpResponseTemplate = "http-response.adoc"
-    private var responseFieldsTemplate = "response-fields.adoc"
-    private val curlRequestTemplate = "curl-request.adoc"
+    private var snippetDefaultPathParameter: String = "{snippets}"
+    private val snippetPath: String = "build/generated-snippets"
+
+    private var pathParameterTemplate: String = "path-parameters.adoc"
+    private var httpRequestTemplate: String = "http-request.adoc"
+    private var requestFieldsTemplate: String = "request-fields.adoc"
+    private var httpResponseTemplate: String = "http-response.adoc"
+    private var responseFieldsTemplate: String = "response-fields.adoc"
+    private val curlRequestTemplate: String = "curl-request.adoc"
+    private val URITemplate:String = "httpie-request.adoc"
 
     fun generateTemplate() {
         val docs: File = File("src/docs/asciidoc/apiDocs.adoc")
 
-        val snippetsDir = File("build/generated-snippets")
-
-        val snippetFiles = snippetsDir.listFiles() ?: emptyArray()
-
-        if (!snippetsDir.exists() || !snippetsDir.isDirectory || snippetFiles.isEmpty()) throw ResponseException(
-            ResponseCode.NOT_FOUND_ERROR
-        )
-
-        val snippetNames: List<String> = snippetFiles.map { snippet -> snippet.name }
-
         val stringBuilder = StringBuilder()
-        stringBuilder
 
+        stringBuilder
             // snippets 경로
             .append("ifndef::snippets[]")
             .append(System.lineSeparator())
@@ -50,7 +43,7 @@ class RestDocsGenerator {
             .append(System.lineSeparator())
             .append(":icons: font")
             .append(System.lineSeparator())
-            .append(":source-highlighter: highlight.js")
+            .append(":source-highlighter: rouge")
             .append(System.lineSeparator())
             .append(":table-caption!:")
             .append(System.lineSeparator())
@@ -82,39 +75,43 @@ class RestDocsGenerator {
                     .append(System.lineSeparator())
 
                 DocsApi.entries.filter { it.docsApiType == type }
-                    .filter { snippetNames.contains(it.directoryName) }
+                    .filter { File("$snippetPath${it.path}").exists() }
                     .forEach { api ->
 
                         stringBuilder
                             .append(buildHeader(api.title, 3))
 
                             .append(System.lineSeparator())
-                            .append(".${api.description}")
+                            .append(".👀 ${api.description}")
 
                             .append(System.lineSeparator())
                             .append(System.lineSeparator())
 
-                        buildCurlRequestTemplate(stringBuilder, api.directoryName)
+                        stringBuilder
+                            .append(System.lineSeparator())
+                            .append(System.lineSeparator())
+                        buildURITemplate(stringBuilder, api.path)
 
                         stringBuilder
                             .append(buildHighlight("Request"))
                             .append(System.lineSeparator())
                             .append(System.lineSeparator())
+                        buildCurlRequestTemplate(stringBuilder, api.path)
 
-                        buildPathParameterTemplate(stringBuilder, api.directoryName)
+                        buildPathParameterTemplate(stringBuilder, api.path)
 
-                        buildRequestFieldsTemplate(stringBuilder, api.directoryName)
+                        buildRequestFieldsTemplate(stringBuilder, api.path)
 
-                        buildRequestSampleTemplate(stringBuilder, api.directoryName)
+                        buildRequestSampleTemplate(stringBuilder, api.path)
 
                         stringBuilder
                             .append(buildHighlight("Response"))
                             .append(System.lineSeparator())
                             .append(System.lineSeparator())
 
-                        buildResponseFieldsTemplate(stringBuilder, api.directoryName)
+                        buildResponseFieldsTemplate(stringBuilder, api.path)
 
-                        buildResponseSampleTemplate(stringBuilder, api.directoryName)
+                        buildResponseSampleTemplate(stringBuilder, api.path)
                     }
             }
 
@@ -139,14 +136,14 @@ class RestDocsGenerator {
             .append("|Name|Description|optional")
             .append(System.lineSeparator())
             .append(System.lineSeparator())
-            .append("\t|access_token")
+            .append("\t|*access_token*")
             .append(System.lineSeparator())
             .append("\t|JWT accessToken")
             .append(System.lineSeparator())
             .append("\t|")
             .append(System.lineSeparator())
             .append(System.lineSeparator())
-            .append("\t|refresh_token")
+            .append("\t|*refresh_token*")
             .append(System.lineSeparator())
             .append("\t|JWT refreshToken (accessToken이 만료된 경우, 재발급 용도로 사용)")
             .append(System.lineSeparator())
@@ -175,7 +172,7 @@ class RestDocsGenerator {
 
         ResponseCode.entries.forEach {
             stringBuilder
-                .append("\t|${it.code}")
+                .append("\t|*${it.code}*")
                 .append(System.lineSeparator())
                 .append("\t|${it.message}")
                 .append(System.lineSeparator())
@@ -210,17 +207,31 @@ class RestDocsGenerator {
 
     private fun isTemplateExist(snippetDir: String, template: String): Boolean {
         return File(snippetDir + template).exists()
+    }
 
+    private fun buildURITemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder{
+        val apiPath = "$snippetDefaultPathParameter$directoryName"
+        val snippetDir = "$snippetPath${directoryName}/"
+        if (isTemplateExist(snippetDir, URITemplate)) {
+            stringBuilder.append(File(snippetDir + URITemplate).readText())
+            stringBuilder.append(" $defaultUri$directoryName HTTP/1.1")
+            stringBuilder.append(System.lineSeparator())
+            stringBuilder.append(System.lineSeparator())
+            stringBuilder.append("----")
+            stringBuilder.append(System.lineSeparator())
+            stringBuilder.append(System.lineSeparator())
+        }
+        return stringBuilder
     }
 
     private fun buildPathParameterTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
-        val apiPath = "$apiDefaultPath/$directoryName"
-        val snippetDir = "build/generated-snippets/${directoryName}/"
+        val snippet = "$snippetDefaultPathParameter$directoryName"
+        val snippetDir = "$snippetPath${directoryName}/"
 
         if (isTemplateExist(snippetDir, pathParameterTemplate)) buildTemplate(
             stringBuilder,
             "path parameter",
-            apiPath,
+            snippet,
             pathParameterTemplate
         )
 
@@ -228,8 +239,8 @@ class RestDocsGenerator {
     }
 
     private fun buildRequestFieldsTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
-        val apiPath = "$apiDefaultPath/$directoryName"
-        val snippetDir = "build/generated-snippets/${directoryName}/"
+        val apiPath = "$snippetDefaultPathParameter$directoryName"
+        val snippetDir = "$snippetPath${directoryName}/"
 
         if (isTemplateExist(snippetDir, requestFieldsTemplate)) buildTemplate(
             stringBuilder,
@@ -242,8 +253,8 @@ class RestDocsGenerator {
     }
 
     private fun buildRequestSampleTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
-        val apiPath = "$apiDefaultPath/$directoryName"
-        val snippetDir = "build/generated-snippets/${directoryName}/"
+        val apiPath = "$snippetDefaultPathParameter$directoryName"
+        val snippetDir = "$snippetPath${directoryName}/"
 
         if (isTemplateExist(snippetDir, httpRequestTemplate)) buildSampleTemplate(
             stringBuilder,
@@ -256,8 +267,8 @@ class RestDocsGenerator {
     }
 
     private fun buildResponseFieldsTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
-        val apiPath = "$apiDefaultPath/$directoryName"
-        val snippetDir = "build/generated-snippets/${directoryName}/"
+        val apiPath = "$snippetDefaultPathParameter$directoryName"
+        val snippetDir = "$snippetPath${directoryName}/"
 
         if (isTemplateExist(snippetDir, responseFieldsTemplate)) buildTemplate(
             stringBuilder,
@@ -270,10 +281,10 @@ class RestDocsGenerator {
     }
 
     private fun buildResponseSampleTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
-        val apiPath = "$apiDefaultPath/$directoryName"
-        val snippetDir = "build/generated-snippets/${directoryName}/"
+        val apiPath = "$snippetDefaultPathParameter$directoryName"
+        val snippetDir = "$snippetPath${directoryName}/"
 
-        if (isTemplateExist(snippetDir, httpResponseTemplate)) buildTemplate(
+        if (isTemplateExist(snippetDir, httpResponseTemplate)) buildSampleTemplate(
             stringBuilder,
             "sample",
             apiPath,
@@ -284,8 +295,8 @@ class RestDocsGenerator {
     }
 
     private fun buildCurlRequestTemplate(stringBuilder: StringBuilder, directoryName: String): StringBuilder {
-        val apiPath = "$apiDefaultPath/$directoryName"
-        val snippetDir = "build/generated-snippets/${directoryName}/"
+        val apiPath = "$snippetDefaultPathParameter$directoryName"
+        val snippetDir = "$snippetPath${directoryName}/"
         if (isTemplateExist(snippetDir, curlRequestTemplate)) buildTemplate(
             stringBuilder,
             "curl",

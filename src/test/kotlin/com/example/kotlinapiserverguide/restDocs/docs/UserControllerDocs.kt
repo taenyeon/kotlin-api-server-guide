@@ -7,6 +7,8 @@ import com.example.kotlinapiserverguide.api.user.domain.dto.JwtToken
 import com.example.kotlinapiserverguide.api.user.domain.dto.LoginRequest
 import com.example.kotlinapiserverguide.api.user.service.UserService
 import com.example.kotlinapiserverguide.restDocs.constant.*
+import com.example.kotlinapiserverguide.restDocs.constant.parser.RequestFields
+import com.example.kotlinapiserverguide.restDocs.constant.parser.ResponseFields
 import com.example.kotlinapiserverguide.restDocs.docs.base.BaseDocs
 import com.example.kotlinapiserverguide.restDocs.infix.type
 import org.junit.jupiter.api.Test
@@ -19,6 +21,7 @@ import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.payload.RequestFieldsSnippet
 import org.springframework.restdocs.snippet.Attributes.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 
@@ -31,6 +34,7 @@ class UserControllerDocs : BaseDocs() {
 
     @Test
     fun join() {
+        val api = DocsApi.USER_JOIN
 
         // init
         val joinRequest = JoinRequest()
@@ -43,7 +47,7 @@ class UserControllerDocs : BaseDocs() {
             .willReturn(JoinResponse(1))
 
         val result = super.mockMvc.perform(
-            RestDocumentationRequestBuilders.post("/api/user/join")
+            RestDocumentationRequestBuilders.post(api.path)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .accept(MediaType.APPLICATION_JSON)
@@ -54,26 +58,17 @@ class UserControllerDocs : BaseDocs() {
             .andDo(MockMvcResultHandlers.print())
             .andDo(
                 document(
-                    "user-join",
-                    super.restDocsUtils.getDocumentRequest(),
-                    super.restDocsUtils.getDocumentResponse(),
-                    requestFields(
-                        attributes(key(DocsAttributeKeys.DEPTH.code + 1).value("")),
+                    api.documentPath,
+                    restDocsUtils.getDocumentRequest(),
+                    restDocsUtils.getDocumentResponse(),
+                    RequestFields.DEPTH_1.build(
                         "name" type STRING means "회원 이름",
                         "username" type STRING means "로그인 ID",
                         "password" type STRING means "로그인 PWD",
                         "phoneNumber" type STRING means "회원 전화번호",
                     ),
-                    responseFields(
-                        attributes(
-                            key(DocsAttributeKeys.DEPTH.code + 1).value(""),
-                            key(DocsAttributeKeys.DEPTH.code + 2).value(""),
-                        ),
-                        *super.restDocsUtils.getDocumentCommonResult(),
-                        *"body" type OBJECT means "결과" fields
-                                arrayOf(
-                                    "body.id" type NUMBER means "회원 SEQ"
-                                ),
+                    ResponseFields.DEPTH_2.build(
+                        "body.id" type NUMBER means "회원 SEQ"
                     )
                 )
             )
@@ -81,6 +76,8 @@ class UserControllerDocs : BaseDocs() {
 
     @Test
     fun login() {
+        val api = DocsApi.USER_LOGIN
+
         val loginRequest = LoginRequest()
         loginRequest.username = "test"
         loginRequest.password = "test"
@@ -94,7 +91,7 @@ class UserControllerDocs : BaseDocs() {
             )
 
         val result = super.mockMvc.perform(
-            RestDocumentationRequestBuilders.post("/api/user/login")
+            RestDocumentationRequestBuilders.post(api.path)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .accept(MediaType.APPLICATION_JSON)
@@ -104,27 +101,38 @@ class UserControllerDocs : BaseDocs() {
             .andDo(MockMvcResultHandlers.print())
             .andDo(
                 document(
-                    "user-login",
+                    api.documentPath,
                     super.restDocsUtils.getDocumentRequest(),
                     super.restDocsUtils.getDocumentResponse(),
-                    requestFields(
-                        attributes(key(DocsAttributeKeys.DEPTH.code + 1).value("")),
+                    RequestFields.DEPTH_1.build(
                         "username" type STRING means "로그인 ID",
                         "password" type STRING means "로그인 PWD",
                     ),
-                    responseFields(
-                        attributes(
-                            key(DocsAttributeKeys.DEPTH.code + 1).value(""),
-                            key(DocsAttributeKeys.DEPTH.code + 2).value("")
-                        ),
-                        *super.restDocsUtils.getDocumentCommonResult(),
-                        *"body" type OBJECT means "결과" fields
-                                arrayOf(
-                                    "body.accessToken" type STRING means "JWT accessToken",
-                                    "body.refreshToken" type STRING means "JWT refreshToken",
-                                ),
-                    )
+                    ResponseFields.DEPTH_2.build(
+                        "body.accessToken" type STRING means "JWT accessToken",
+                        "body.refreshToken" type STRING means "JWT refreshToken",
+                    ),
                 )
+            )
+    }
+
+    @Test
+    fun logout() {
+
+        val api = DocsApi.USER_LOGOUT
+
+        val result = super.mockMvc.perform(RestDocumentationRequestBuilders.delete(api.path))
+
+        result
+            .andDo(MockMvcResultHandlers.print())
+            .andDo(
+                document(
+                    api.documentPath,
+                    super.restDocsUtils.getDocumentRequest(),
+                    super.restDocsUtils.getDocumentResponse(),
+                    ResponseFields.DEPTH_1.build(),
+                )
+
             )
     }
 

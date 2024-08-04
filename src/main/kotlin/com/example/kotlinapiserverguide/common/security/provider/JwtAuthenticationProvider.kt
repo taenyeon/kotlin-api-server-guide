@@ -88,7 +88,7 @@ class JwtAuthenticationProvider(
 
     private fun setUser(id: Long) {
         val user = userMapper.toUser(memberCacheService.findMember(id))
-        val authenticationToken = UsernamePasswordAuthenticationToken(user, null, null)
+        val authenticationToken: UsernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(user, null, null)
         authenticationToken.details = user
         SecurityContextHolder.getContext().authentication = authenticationToken
     }

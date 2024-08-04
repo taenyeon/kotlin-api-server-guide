@@ -1,11 +1,14 @@
 package com.example.kotlinapiserverguide.restDocs.util
 
+import com.example.kotlinapiserverguide.restDocs.constant.DocsAttributeKeys
 import com.example.kotlinapiserverguide.restDocs.constant.DocsField
 import com.example.kotlinapiserverguide.restDocs.constant.STRING
 import com.example.kotlinapiserverguide.restDocs.infix.type
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
+import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.snippet.Attributes.*
 
 
 class RestDocsUtils {
@@ -30,12 +33,4 @@ class RestDocsUtils {
     fun getDocumentResponse(): OperationResponsePreprocessor {
         return preprocessResponse(prettyPrint())
     }
-
-    fun getDocumentCommonResult(): Array<DocsField> {
-        return arrayOf(
-            "resultCode" type STRING means "결과 코드",
-            "resultMessage" type STRING means "결과 메세지",
-        )
-    }
-
 }

@@ -3,7 +3,7 @@ package com.example.kotlinapiserverguide.restDocs.constant
 import org.springframework.restdocs.snippet.Attributes.Attribute
 
 enum class DocsAttributeKeys(
-    val code: String,
+    private val code: String,
 ) {
     DEFAULT("defaultValue"),
     FORMAT("format"),
@@ -11,11 +11,15 @@ enum class DocsAttributeKeys(
     DEPTH("depth")
     ;
 
-    fun <T> set(value: T): Attribute {
+    fun set(value: String? = "-"): Attribute {
         return Attribute(this.code, value)
     }
 
-    fun <T> depth(depth: Int, value: T): Attribute {
+    fun set(depth: Int): Attribute {
+        return Attribute(this.code + depth, "-")
+    }
+
+    fun <T> set(depth: Int, value: T): Attribute {
         return Attribute(this.code + depth, value)
     }
 }

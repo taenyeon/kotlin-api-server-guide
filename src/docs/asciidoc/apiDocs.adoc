@@ -4,7 +4,7 @@ endif::[]
 
 :doctype: book
 :icons: font
-:source-highlighter: highlight.js
+:source-highlighter: rouge
 :table-caption!:
 = 🚀 API
 :toc: left
@@ -17,11 +17,11 @@ endif::[]
 |===
 |Name|Description|optional
 
-	|access_token
+	|*access_token*
 	|JWT accessToken
 	|
 
-	|refresh_token
+	|*refresh_token*
 	|JWT refreshToken (accessToken이 만료된 경우, 재발급 용도로 사용)
 	|
 
@@ -32,43 +32,43 @@ endif::[]
 |===
 |Code|Description
 
-	|SUCCESS
+	|*SUCCESS*
 	|success.
 
-	|INVALID_TOKEN_ERROR
+	|*INVALID_TOKEN_ERROR*
 	|invalid token error occurred.
 
-	|WRONG_PASSWORD_ERROR
+	|*WRONG_PASSWORD_ERROR*
 	|wrong password error occurred.
 
-	|ALREADY_LOGOUT_ERROR
+	|*ALREADY_LOGOUT_ERROR*
 	|already logout error occurred.
 
-	|AUTH_ERROR
+	|*AUTH_ERROR*
 	|auth error occurred.
 
-	|ACCESS_DENIED_ERROR
+	|*ACCESS_DENIED_ERROR*
 	|access denied error occurred.
 
-	|EXIST_MEMBER
+	|*EXIST_MEMBER*
 	|already member error occurred.
 
-	|UNKNOWN_ERROR
+	|*UNKNOWN_ERROR*
 	|unknown error occurred.
 
-	|MANUAL_ERROR
+	|*MANUAL_ERROR*
 	|manual error occurred.
 
-	|NOT_FOUNT_ERROR
+	|*NOT_FOUNT_ERROR*
 	|not found error occurred.
 
-	|INVALID_REQUEST_PARAM
+	|*INVALID_REQUEST_PARAM*
 	|invalid request parameter error occurred.
 
-	|ENCRYPT_ERROR
+	|*ENCRYPT_ERROR*
 	|encrypt error occurred
 
-	|DECRYPT_ERROR
+	|*DECRYPT_ERROR*
 	|decrypt error occurred
 
 
@@ -77,93 +77,163 @@ endif::[]
 
 == 유저 API
 === 유저 회원가입
-.유저 회원가입을 한다.
+.👀 유저 회원가입을 한다.
 
-.curl
 
-include::{snippets}/user-join/curl-request.adoc[]
+
+[source,http,options="nowrap"]
+----
+POST localhost:8080/api/user/join HTTP/1.1
+
+----
 
 *Request*
 
+.curl
+
+include::{snippets}/api/user/join/curl-request.adoc[]
+
 .request body
 
-include::{snippets}/user-join/request-fields.adoc[]
+include::{snippets}/api/user/join/request-fields.adoc[]
 
 .sample
 
 [%collapsible]
 ====
-include::{snippets}/user-join/http-request.adoc[]
+include::{snippets}/api/user/join/http-request.adoc[]
 ====
 
 *Response*
 
 .response body
 
-include::{snippets}/user-join/response-fields.adoc[]
+include::{snippets}/api/user/join/response-fields.adoc[]
 
 .sample
 
-include::{snippets}/user-join/http-response.adoc[]
+[%collapsible]
+====
+include::{snippets}/api/user/join/http-response.adoc[]
+====
 
 === 유저 로그인
-.유저 로그인을 시도한다.
+.👀 유저 로그인을 시도한다.
 
-.curl
 
-include::{snippets}/user-login/curl-request.adoc[]
+
+[source,http,options="nowrap"]
+----
+POST localhost:8080/api/user/login HTTP/1.1
+
+----
 
 *Request*
 
+.curl
+
+include::{snippets}/api/user/login/curl-request.adoc[]
+
 .request body
 
-include::{snippets}/user-login/request-fields.adoc[]
+include::{snippets}/api/user/login/request-fields.adoc[]
 
 .sample
 
 [%collapsible]
 ====
-include::{snippets}/user-login/http-request.adoc[]
+include::{snippets}/api/user/login/http-request.adoc[]
 ====
 
 *Response*
 
 .response body
 
-include::{snippets}/user-login/response-fields.adoc[]
+include::{snippets}/api/user/login/response-fields.adoc[]
 
 .sample
 
-include::{snippets}/user-login/http-response.adoc[]
+[%collapsible]
+====
+include::{snippets}/api/user/login/http-response.adoc[]
+====
+
+=== 유저 로그아웃
+.👀 유저 로그아웃을 한다.
+
+
+
+[source,http,options="nowrap"]
+----
+DELETE localhost:8080/api/user/logout HTTP/1.1
+
+----
+
+*Request*
+
+.curl
+
+include::{snippets}/api/user/logout/curl-request.adoc[]
+
+.sample
+
+[%collapsible]
+====
+include::{snippets}/api/user/logout/http-request.adoc[]
+====
+
+*Response*
+
+.response body
+
+include::{snippets}/api/user/logout/response-fields.adoc[]
+
+.sample
+
+[%collapsible]
+====
+include::{snippets}/api/user/logout/http-response.adoc[]
+====
 
 == 회원 API
 === 회원 조회(로그인 ID)
-.로그인 ID로 회원을 조회한다.
+.👀 로그인 ID로 회원을 조회한다.
 
-.curl
 
-include::{snippets}/user-find/curl-request.adoc[]
+
+[source,http,options="nowrap"]
+----
+GET localhost:8080/api/member/{username} HTTP/1.1
+
+----
 
 *Request*
 
+.curl
+
+include::{snippets}/api/member/{username}/curl-request.adoc[]
+
 .path parameter
 
-include::{snippets}/user-find/path-parameters.adoc[]
+include::{snippets}/api/member/{username}/path-parameters.adoc[]
 
 .sample
 
 [%collapsible]
 ====
-include::{snippets}/user-find/http-request.adoc[]
+include::{snippets}/api/member/{username}/http-request.adoc[]
 ====
 
 *Response*
 
 .response body
 
-include::{snippets}/user-find/response-fields.adoc[]
+include::{snippets}/api/member/{username}/response-fields.adoc[]
 
 .sample
 
-include::{snippets}/user-find/http-response.adoc[]
+[%collapsible]
+====
+include::{snippets}/api/member/{username}/http-response.adoc[]
+====
 
