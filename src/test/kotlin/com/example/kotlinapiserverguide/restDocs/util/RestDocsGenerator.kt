@@ -93,6 +93,8 @@ class RestDocsGenerator {
                         buildURITemplate(stringBuilder, api.path)
 
                         stringBuilder
+                            .append("{nbsp} +")
+                            .append(System.lineSeparator())
                             .append(buildHighlight("Request"))
                             .append(System.lineSeparator())
                             .append(System.lineSeparator())
@@ -105,6 +107,8 @@ class RestDocsGenerator {
                         buildRequestSampleTemplate(stringBuilder, api.path)
 
                         stringBuilder
+                            .append("{nbsp} +")
+                            .append(System.lineSeparator())
                             .append(buildHighlight("Response"))
                             .append(System.lineSeparator())
                             .append(System.lineSeparator())
