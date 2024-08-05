@@ -2,14 +2,24 @@ package com.example.kotlinapiserverguide.restDocs.constant
 
 import org.springframework.restdocs.payload.FieldDescriptor
 
+open class DocsField : FieldDescriptor {
 
-open class DocsField(path: String?) : FieldDescriptor(path) {
-
-    var depth: Int = 1
-
-    init {
+    constructor(path: String?) : super(path) {
         this.attributes(DocsAttributeKeys.DEPTH.set(this.depth, this.path))
     }
+
+    constructor(path: String, docsField: DocsField) : super(path) {
+        this.type(docsField.type)
+        this.description(docsField.description)
+        this.depth = docsField.depth
+        this.format = docsField.format
+        this.default = docsField.default
+        this.example = docsField.example
+        if (docsField.isIgnored) this.ignored()
+        if (docsField.isOptional) this.optional()
+    }
+
+    var depth: Int = 1
 
     protected open var default: String
         get() = this.attributes.getOrDefault(DocsAttributeKeys.DEFAULT.name, "") as String
@@ -63,17 +73,21 @@ open class DocsField(path: String?) : FieldDescriptor(path) {
         if (value) this.ignored()
         return this
     }
+
     // is Last
     open infix fun fields(fields: Array<DocsField>): Array<DocsField> {
         val parentsDepth = this.depth
-        val fieldDepth = this.depth + 1
-        fields.forEach {
-            it.depth = fieldDepth
-            val name = it.path.split(".").last()
-            it.attributes(DocsAttributeKeys.DEPTH.set(parentsDepth,"-" ))
-            it.attributes(DocsAttributeKeys.DEPTH.set(fieldDepth, name))
+        val childFieldDepth = this.depth + 1
+
+        val childFields = fields.map { DocsField("${this.path}.${it.path}", it) }.toTypedArray()
+
+        childFields.forEach {
+            it.depth = childFieldDepth
+            (1..parentsDepth).forEach { depth -> it.attributes(DocsAttributeKeys.DEPTH.set(depth, "-")) }
+            it.attributes(DocsAttributeKeys.DEPTH.set(childFieldDepth, it.path))
         }
-        return arrayOf(this, *fields)
+
+        return arrayOf(this, *childFields)
     }
 
 }

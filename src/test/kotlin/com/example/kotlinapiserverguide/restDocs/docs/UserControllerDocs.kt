@@ -11,6 +11,11 @@ import com.example.kotlinapiserverguide.restDocs.constant.parser.RequestFields
 import com.example.kotlinapiserverguide.restDocs.constant.parser.ResponseFields
 import com.example.kotlinapiserverguide.restDocs.docs.base.BaseDocs
 import com.example.kotlinapiserverguide.restDocs.infix.type
+import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.DEFAULT_DOCUMENT_REQUEST
+import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.DEFAULT_DOCUMENT_RESPONSE
+import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.buildDocument
+import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.buildRequestFields
+import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.buildResponseFields
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 
@@ -20,9 +25,6 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
-import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.restdocs.payload.RequestFieldsSnippet
-import org.springframework.restdocs.snippet.Attributes.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 
 @WebMvcTest(controllers = [UserController::class], useDefaultFilters = false)
@@ -57,20 +59,19 @@ class UserControllerDocs : BaseDocs() {
         result
             .andDo(MockMvcResultHandlers.print())
             .andDo(
-                document(
+                buildDocument(
                     api.documentPath,
-                    restDocsUtils.getDocumentRequest(),
-                    restDocsUtils.getDocumentResponse(),
-                    RequestFields.DEPTH_1.build(
+                    buildRequestFields(
                         "name" type STRING means "회원 이름",
                         "username" type STRING means "로그인 ID",
                         "password" type STRING means "로그인 PWD",
                         "phoneNumber" type STRING means "회원 전화번호",
                     ),
-                    ResponseFields.DEPTH_2.build(
-                        "body.id" type NUMBER means "회원 SEQ"
-                    )
+                    buildResponseFields(
+                        "id" type NUMBER means "회원 SEQ"
+                    ),
                 )
+
             )
     }
 
@@ -100,18 +101,16 @@ class UserControllerDocs : BaseDocs() {
         result
             .andDo(MockMvcResultHandlers.print())
             .andDo(
-                document(
+                buildDocument(
                     api.documentPath,
-                    super.restDocsUtils.getDocumentRequest(),
-                    super.restDocsUtils.getDocumentResponse(),
-                    RequestFields.DEPTH_1.build(
+                    buildRequestFields(
                         "username" type STRING means "로그인 ID",
                         "password" type STRING means "로그인 PWD",
                     ),
-                    ResponseFields.DEPTH_2.build(
-                        "body.accessToken" type STRING means "JWT accessToken",
-                        "body.refreshToken" type STRING means "JWT refreshToken",
-                    ),
+                    buildResponseFields(
+                        "accessToken" type STRING means "JWT accessToken",
+                        "refreshToken" type STRING means "JWT refreshToken",
+                    )
                 )
             )
     }
@@ -126,13 +125,10 @@ class UserControllerDocs : BaseDocs() {
         result
             .andDo(MockMvcResultHandlers.print())
             .andDo(
-                document(
+                buildDocument(
                     api.documentPath,
-                    super.restDocsUtils.getDocumentRequest(),
-                    super.restDocsUtils.getDocumentResponse(),
-                    ResponseFields.DEPTH_1.build(),
+                    buildResponseFields()
                 )
-
             )
     }
 

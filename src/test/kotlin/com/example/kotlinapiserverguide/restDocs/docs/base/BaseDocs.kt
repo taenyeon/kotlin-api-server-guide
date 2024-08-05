@@ -41,8 +41,6 @@ open class BaseDocs {
     @Autowired
     lateinit var mockMvc: MockMvc
 
-    var restDocsUtils: RestDocsUtils = RestDocsUtils()
-
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
