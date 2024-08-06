@@ -7,12 +7,8 @@ import com.example.kotlinapiserverguide.api.user.domain.dto.JwtToken
 import com.example.kotlinapiserverguide.api.user.domain.dto.LoginRequest
 import com.example.kotlinapiserverguide.api.user.service.UserService
 import com.example.kotlinapiserverguide.restDocs.constant.*
-import com.example.kotlinapiserverguide.restDocs.constant.parser.RequestFields
-import com.example.kotlinapiserverguide.restDocs.constant.parser.ResponseFields
 import com.example.kotlinapiserverguide.restDocs.docs.base.BaseDocs
 import com.example.kotlinapiserverguide.restDocs.infix.type
-import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.DEFAULT_DOCUMENT_REQUEST
-import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.DEFAULT_DOCUMENT_RESPONSE
 import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.buildDocument
 import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.buildRequestFields
 import com.example.kotlinapiserverguide.restDocs.util.RestDocsUtils.Companion.buildResponseFields
@@ -23,7 +19,6 @@ import org.mockito.BDDMockito.*
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 

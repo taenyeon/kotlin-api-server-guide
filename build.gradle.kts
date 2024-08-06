@@ -78,8 +78,7 @@ dependencies {
     // - MOCK
     testImplementation("io.mockk:mockk:1.9.3")
     // - KOTEST
-    testImplementation("io.kotest:kotest-runner-junit5")
-    testImplementation("io.kotest:kotest-assertions-core")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:4.6.0")
 
     // MAPPING
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
@@ -126,7 +125,7 @@ allOpen {
     annotation("jakarta.persistence.MappedSuperclass")
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 

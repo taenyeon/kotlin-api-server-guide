@@ -32,6 +32,7 @@ class MemberControllerDocs : BaseDocs() {
         val api = DocsApi.MEMBER_FIND
 
         val username: String = "test"
+
         given(memberService.findMemberDto(username))
             .willReturn(
                 MemberDto(
