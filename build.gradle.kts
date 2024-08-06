@@ -70,10 +70,16 @@ dependencies {
 
     // TEST
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    // - SECURITY
+    testImplementation("org.springframework.security:spring-security-test")
+    // - REST_DOCS
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    // - MOCK
     testImplementation("io.mockk:mockk:1.9.3")
+    // - KOTEST
+    testImplementation("io.kotest:kotest-runner-junit5")
+    testImplementation("io.kotest:kotest-assertions-core")
 
     // MAPPING
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
