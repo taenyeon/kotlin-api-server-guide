@@ -1,4 +1,4 @@
-package com.example.kotlinapiserverguide.coverage.member.memberService
+package com.example.kotlinapiserverguide.serviceTest.member.coverage.memberService
 
 import com.example.kotlinapiserverguide.api.member.domain.entity.Member
 import com.example.kotlinapiserverguide.api.member.repository.MemberRepository
@@ -6,13 +6,11 @@ import com.example.kotlinapiserverguide.api.member.service.MemberService
 import com.example.kotlinapiserverguide.common.exception.ResponseException
 import com.example.kotlinapiserverguide.common.function.encrypt
 import com.example.kotlinapiserverguide.common.http.constant.ResponseCode
-import com.example.kotlinapiserverguide.coverage.member.memberService.AddMemberTest.Companion
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import org.springframework.data.repository.findByIdOrNull
 
 internal class FindMemberByUsernameTest : DescribeSpec({
 

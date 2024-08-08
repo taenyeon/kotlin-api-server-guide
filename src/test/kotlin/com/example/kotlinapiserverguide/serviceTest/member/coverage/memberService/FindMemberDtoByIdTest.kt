@@ -1,4 +1,4 @@
-package com.example.kotlinapiserverguide.coverage.member.memberService
+package com.example.kotlinapiserverguide.serviceTest.member.coverage.memberService
 
 import com.example.kotlinapiserverguide.api.member.domain.entity.Member
 import com.example.kotlinapiserverguide.api.member.repository.MemberRepository
@@ -11,36 +11,36 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import org.springframework.data.repository.findByIdOrNull
+import java.time.LocalDateTime
 
-internal class AddMemberTest : DescribeSpec({
+internal class FindMemberDtoByIdTest : DescribeSpec({
 
-    describe("회원 생성") {
+    member.createdAt = LocalDateTime.now()
+    member.updatedAt = LocalDateTime.now()
 
-        // common given
-        every { memberRepository.save(member) } returns member
-
-        context("이미 기존 회원 정보가 있으면") {
-
-            every { memberRepository.findByUsername(username.encrypt()) } returns member
-
-            it("[ERROR] EXIST_MEMBER") {
-
-                shouldThrow<ResponseException> { memberService.addMember(member) }
-                    .responseCode shouldBe ResponseCode.EXIST_MEMBER
-
-            }
-        }
+    describe("회원 DTO 조회 (id)") {
 
         context("기존 회원 정보가 없으면") {
 
-            every { memberRepository.findByUsername(username.encrypt()) } returns null
+            every { memberRepository.findByIdOrNull(id) } returns null
 
-            it("SUCCESS") {
+            it("[ERROR] NOT_FOUND") {
 
-                memberService.addMember(member) shouldBe id
+                shouldThrow<ResponseException> { memberService.findMemberDto(id) }
+                    .responseCode shouldBe ResponseCode.NOT_FOUND_ERROR
             }
         }
 
+        context("회원 정보가 있으면") {
+
+            every { memberRepository.findByIdOrNull(id) } returns member
+
+            it("SUCCESS") {
+
+                memberService.findMemberDto(id).id shouldBe id
+            }
+        }
     }
 }) {
     companion object {
@@ -55,10 +55,10 @@ internal class AddMemberTest : DescribeSpec({
 
         private var member = Member(
             1,
+            "test".encrypt(),
             "test",
-            "test",
-            "test",
-            "01011111111",
+            "test".encrypt(),
+            "01011111111".encrypt(),
             null
         )
     }

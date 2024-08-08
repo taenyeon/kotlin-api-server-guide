@@ -1,4 +1,4 @@
-package com.example.kotlinapiserverguide.coverage.member.memberService
+package com.example.kotlinapiserverguide.serviceTest.member.coverage.memberService
 
 import com.example.kotlinapiserverguide.api.member.domain.entity.Member
 import com.example.kotlinapiserverguide.api.member.repository.MemberRepository
@@ -11,38 +11,36 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDateTime
 
-internal class CheckExistMemberTest : DescribeSpec({
+internal class FindMemberDtoByUsernameTest : DescribeSpec({
 
-    describe("회원 생성") {
+    member.createdAt = LocalDateTime.now()
+    member.updatedAt = LocalDateTime.now()
 
-        // common given
-        every { memberRepository.save(member) } returns member
-
-        context("이미 기존 회원 정보가 있으면") {
-
-            every { memberRepository.findByUsername(username.encrypt()) } returns member
-
-            it("[ERROR] EXIST_MEMBER") {
-
-                shouldThrow<ResponseException> { memberService.addMember(member) }
-                    .responseCode shouldBe ResponseCode.EXIST_MEMBER
-
-            }
-        }
+    describe("회원 DTO 조회 (username)") {
 
         context("기존 회원 정보가 없으면") {
 
             every { memberRepository.findByUsername(username.encrypt()) } returns null
 
-            it("SUCCESS") {
+            it("[ERROR] NOT_FOUND") {
 
-                memberService.addMember(member) shouldBe id
+                shouldThrow<ResponseException> { memberService.findMemberDto(username) }
+                    .responseCode shouldBe ResponseCode.NOT_FOUND_ERROR
             }
         }
 
-    }
+        context("회원 정보가 있으면") {
 
+            every { memberRepository.findByUsername(username.encrypt()) } returns member
+
+            it("SUCCESS") {
+
+                memberService.findMemberDto(username).id shouldBe id
+            }
+        }
+    }
 }) {
     companion object {
 
@@ -56,10 +54,10 @@ internal class CheckExistMemberTest : DescribeSpec({
 
         private var member = Member(
             1,
+            "test".encrypt(),
             "test",
-            "test",
-            "test",
-            "01011111111",
+            "test".encrypt(),
+            "01011111111".encrypt(),
             null
         )
     }

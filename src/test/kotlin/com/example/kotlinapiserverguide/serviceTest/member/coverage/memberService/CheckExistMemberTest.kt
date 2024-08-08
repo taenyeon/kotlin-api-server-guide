@@ -1,43 +1,48 @@
-package com.example.kotlinapiserverguide.coverage.member.memberService
+package com.example.kotlinapiserverguide.serviceTest.member.coverage.memberService
 
 import com.example.kotlinapiserverguide.api.member.domain.entity.Member
 import com.example.kotlinapiserverguide.api.member.repository.MemberRepository
 import com.example.kotlinapiserverguide.api.member.service.MemberService
 import com.example.kotlinapiserverguide.common.exception.ResponseException
+import com.example.kotlinapiserverguide.common.function.encrypt
 import com.example.kotlinapiserverguide.common.http.constant.ResponseCode
-import com.example.kotlinapiserverguide.coverage.member.memberService.AddMemberTest.Companion
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import org.springframework.data.repository.findByIdOrNull
 
-internal class FindMemberByIdTest : DescribeSpec({
+internal class CheckExistMemberTest : DescribeSpec({
 
-    describe("회원 조회 (id)") {
+    describe("회원 생성") {
+
+        // common given
+        every { memberRepository.save(member) } returns member
+
+        context("이미 기존 회원 정보가 있으면") {
+
+            every { memberRepository.findByUsername(username.encrypt()) } returns member
+
+            it("[ERROR] EXIST_MEMBER") {
+
+                shouldThrow<ResponseException> { memberService.addMember(member) }
+                    .responseCode shouldBe ResponseCode.EXIST_MEMBER
+
+            }
+        }
 
         context("기존 회원 정보가 없으면") {
 
-            every { memberRepository.findByIdOrNull(id) } returns null
-
-            it("[ERROR] NOT_FOUND") {
-
-                shouldThrow<ResponseException> { memberService.findMember(id) }
-                    .responseCode shouldBe ResponseCode.NOT_FOUND_ERROR
-            }
-        }
-
-        context("회원 정보가 있으면") {
-
-            every { memberRepository.findByIdOrNull(id) } returns member
+            every { memberRepository.findByUsername(username.encrypt()) } returns null
 
             it("SUCCESS") {
 
-                memberService.findMember(id).id shouldBe id
+                memberService.addMember(member) shouldBe id
             }
         }
+
     }
+
 }) {
     companion object {
 

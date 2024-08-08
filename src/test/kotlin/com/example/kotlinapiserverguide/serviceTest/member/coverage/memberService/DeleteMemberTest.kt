@@ -1,4 +1,4 @@
-package com.example.kotlinapiserverguide.coverage.member.memberService
+package com.example.kotlinapiserverguide.serviceTest.member.coverage.memberService
 
 import com.example.kotlinapiserverguide.api.member.repository.MemberRepository
 import com.example.kotlinapiserverguide.api.member.service.MemberService
