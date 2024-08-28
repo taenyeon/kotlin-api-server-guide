@@ -60,7 +60,8 @@ class SecurityConfig(private val jwtAuthenticationProvider: JwtAuthenticationPro
             "/api/user/join",
             "/error",
             "/api/user/accessToken",
-            "/chat/**"
+            "/api/test/**",
+
         )
             .permitAll()
             .anyRequest()
