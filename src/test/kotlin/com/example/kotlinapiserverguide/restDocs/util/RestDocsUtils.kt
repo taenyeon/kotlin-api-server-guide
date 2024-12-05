@@ -36,20 +36,28 @@ class RestDocsUtils {
         }
 
         fun buildResponseFields(vararg fields: DocsField): ResponseFieldsSnippet {
-            val docsFields =
+            val docsFields: Array<DocsField> =
                 if (fields.isEmpty())
                     arrayOf("body" type NULL means "결과")
                 else
                     "body" type OBJECT means "결과" fields arrayOf(*fields)
 
-            val depth = docsFields.maxOfOrNull { it.depth } ?: 1
+            docsFields.forEach { println("field: ${it.attributes}") }
 
-            return responseFields(
-                attributes(*(1..depth).map { DocsAttributeKeys.DEPTH.set(it) }.toTypedArray()),
-                "resultCode" type STRING means "결과 코드",
-                "resultMessage" type STRING means "결과 메세지",
+            val depth: Int = docsFields.maxOfOrNull { it.depth } ?: 1
+
+            val attributes: MutableMap<String, Any> =
+                attributes(*(1..depth).map { DocsAttributeKeys.DEPTH.set(it) }.toTypedArray())
+
+            attributes[DocsAttributeKeys.FORMAT.code] = "&nbsp;"
+
+            val responseFields = responseFields(
+                attributes,
+                "resultCode" type STRING means "결과 코드" isOptional true,
+                "resultMessage" type STRING means "결과 메세지" isOptional true,
                 *docsFields
             )
+            return responseFields
         }
 
         fun buildRequestFields(vararg field: DocsField): RequestFieldsSnippet {

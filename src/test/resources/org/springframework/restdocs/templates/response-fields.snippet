@@ -1,15 +1,16 @@
 [%autowidth]
 |===
-{{#depth1}}|Depth1{{/depth1}}{{#depth2}}|Depth2{{/depth2}}{{#depth3}}|Depth3{{/depth3}}|type|Description{{#format}}|format{{/format}}|optional
+{{#depth1}}|Depth1{{/depth1}}{{#depth2}}|Depth2{{/depth2}}{{#depth3}}|Depth3{{/depth3}}|type|optional|Description|format
 
 {{#fields}}
     {{#depth1}}|*{{depth1}}*{{/depth1}}
     {{#depth2}}|*{{depth2}}*{{/depth2}}
     {{#depth3}}|*{{depth3}}*{{/depth3}}
     |{{type}}
+    {{#optional}}|o{{/optional}}
+    {{^optional}}|x{{/optional}}
     |{{description}}
-    {{#format}}|{{format}}{{/format}}
-    |{{#optional}}o{{/optional}}
+    |{{format}}
 {{/fields}}
 
 |===

@@ -67,7 +67,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
-    testImplementation("io.kotest:kotest-property")
+//    testImplementation("io.kotest:kotest-property")
 
     // TEST
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -140,8 +140,8 @@ tasks {
     }
 
     jacocoTestReport {
+        executionData(fileTree(buildDir).include("jacoco/*.exec"))
         reports {
-
             html.required = true
             xml.required = false
             csv.required = false

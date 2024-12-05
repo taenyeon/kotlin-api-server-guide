@@ -1,10 +1,8 @@
-insert into test.tb_member_connect(is_connected)
-values (1);
+INSERT INTO test.tb_member_connect(is_connected)
+VALUES (1);
 
-insert into test.member (username,password,name,phone_number)
-values (
+INSERT INTO test.member (username, password, name, phone_number)
+VALUES ('test',
         'test',
         'test',
-        'test',
-        '01011111111'
-       )
+        '01011111111');

@@ -21,31 +21,26 @@ open class DocsField : FieldDescriptor {
 
     var depth: Int = 1
 
-    protected open var default: String
-        get() = this.attributes.getOrDefault(DocsAttributeKeys.DEFAULT.name, "") as String
+    protected open var default: String?
+        get() = this.attributes.getOrDefault(DocsAttributeKeys.DEFAULT.code, "&nbsp;") as String
         set(value) {
             this.attributes(DocsAttributeKeys.DEFAULT.set(value))
         }
 
-    protected open var format: String
-        get() = this.attributes.getOrDefault(DocsAttributeKeys.FORMAT.name, "") as String
+    protected open var format: String?
+        get() = this.attributes.getOrDefault(DocsAttributeKeys.FORMAT.code, "&nbsp;") as String
         set(value) {
             this.attributes(DocsAttributeKeys.FORMAT.set(value))
         }
 
-    protected open var example: String
-        get() = this.attributes.getOrDefault(DocsAttributeKeys.EXAMPLE.name, "") as String
+    protected open var example: String?
+        get() = this.attributes.getOrDefault(DocsAttributeKeys.EXAMPLE.code, "&nbsp;") as String
         set(value) {
             this.attributes(DocsAttributeKeys.EXAMPLE.set(value))
         }
 
     open infix fun means(value: String): DocsField {
         this.description(value)
-        return this
-    }
-
-    open infix fun attributes(block: DocsField.() -> Unit): DocsField {
-        block()
         return this
     }
 
@@ -78,13 +73,14 @@ open class DocsField : FieldDescriptor {
     open infix fun fields(fields: Array<DocsField>): Array<DocsField> {
         val parentsDepth = this.depth
         val childFieldDepth = this.depth + 1
-
-        val childFields = fields.map { DocsField("${this.path}.${it.path}", it) }.toTypedArray()
+        val childFields: Array<DocsField> = fields
+            .map { DocsField("${this.path}.${it.path}", it) }
+            .toTypedArray()
 
         childFields.forEach {
             it.depth = childFieldDepth
-            (1..parentsDepth).forEach { depth -> it.attributes(DocsAttributeKeys.DEPTH.set(depth, "-")) }
-            it.attributes(DocsAttributeKeys.DEPTH.set(childFieldDepth, it.path))
+            (1..parentsDepth).forEach { depth -> it.attributes(DocsAttributeKeys.DEPTH.set(depth, "&nbsp;")) }
+            it.attributes(DocsAttributeKeys.DEPTH.set(childFieldDepth, it.path.split(".").last()))
         }
 
         return arrayOf(this, *childFields)
