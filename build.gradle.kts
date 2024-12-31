@@ -130,22 +130,44 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
+tasks.register<Test>("jacocoTest") {
+    group = "verification"
+    description = "only jacoco tests"
+
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+
+    include("**/coverage/**")
+
+    extensions.configure(JacocoTaskExtension::class.java) {
+        destinationFile = file("$buildDir/jacoco/testOnly.exec")
+    }
+}
+
 // ascii docs
 val snippetsDir by extra { file("build/generated-snippets") }
 
 tasks {
+
     test {
         outputs.dir(snippetsDir)
         finalizedBy(jacocoTestReport)
     }
 
     jacocoTestReport {
+//        val jacocoTest = tasks.filter { it.name == "jacocoTest" }.orNull
+//        if (jacocoTest != null) dependsOn(jacocoTest)
+
         executionData(fileTree(buildDir).include("jacoco/*.exec"))
         reports {
             html.required = true
             xml.required = false
             csv.required = false
-            val excludes = mutableListOf<String>()
+            val excludes = mutableListOf<String>(
+                "**/dto/*",
+                "**/entity/*",
+                "**/common/filter/*"
+            )
 
             classDirectories.setFrom(
                 sourceSets.main.get().output.asFileTree.matching {
