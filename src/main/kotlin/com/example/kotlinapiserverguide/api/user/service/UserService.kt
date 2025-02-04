@@ -11,6 +11,7 @@ import com.example.kotlinapiserverguide.api.member.domain.entity.Member
 import com.example.kotlinapiserverguide.api.member.service.MemberService
 import com.example.kotlinapiserverguide.api.user.domain.dto.*
 import com.example.kotlinapiserverguide.common.exception.ResponseException
+import com.example.kotlinapiserverguide.common.function.logger
 import com.example.kotlinapiserverguide.common.http.constant.ResponseCode
 import com.example.kotlinapiserverguide.common.security.constant.TokenStatus
 import org.springframework.security.core.context.SecurityContextHolder
@@ -22,6 +23,7 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
     private val jwtTokenProvider: JwtTokenProvider,
 ) {
+    val log = logger()
     private val userMapper: UserMapper = Mappers.getMapper(UserMapper::class.java)
 
     private val joinRequestMapper: JoinRequestMapper = Mappers.getMapper(JoinRequestMapper::class.java)
@@ -29,7 +31,7 @@ class UserService(
     fun getUser(): MemberDto {
         if (SecurityContextHolder.getContext().authentication?.details == null)
             throw ResponseException(ResponseCode.INVALID_TOKEN)
-
+        log.info("authorized")
         return userMapper.toMemberResponse(SecurityContextHolder.getContext().authentication.details as User)
     }
 
