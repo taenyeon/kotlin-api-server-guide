@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.time.LocalDateTime
 
-internal class FindUserTest : DescribeSpec({
+internal class GetUserTest : DescribeSpec({
 
     describe("유저 조회 (로그인 상태)") {
         context("로그인 안했으면") {

@@ -29,9 +29,7 @@ class UserService(
     private val joinRequestMapper: JoinRequestMapper = Mappers.getMapper(JoinRequestMapper::class.java)
 
     fun getUser(): MemberDto {
-        if (SecurityContextHolder.getContext().authentication?.details == null)
-            throw ResponseException(ResponseCode.INVALID_TOKEN)
-        log.info("authorized")
+        if (SecurityContextHolder.getContext().authentication?.details == null) throw ResponseException(ResponseCode.INVALID_TOKEN)
         return userMapper.toMemberResponse(SecurityContextHolder.getContext().authentication.details as User)
     }
 
@@ -61,7 +59,6 @@ class UserService(
 
             else -> throw ResponseException(ResponseCode.INVALID_TOKEN)
         }
-
     }
 
     fun matchingPassword(rawPassword: String, encodedPassword: String) {

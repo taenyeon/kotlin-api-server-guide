@@ -46,25 +46,22 @@ class MemberControllerDocs : BaseDocs() {
                 )
             )
 
-        val result: ResultActions = mockMvc.perform(
-            RestDocumentationRequestBuilders.get(api.path, username)
-        )
-
-        result.andDo(
-            buildDocument(
-                documentPath = api.documentPath,
-                pathParameters("username" means "로그인 ID"),
-                buildResponseFields(
-                    "id" type NUMBER means "회원 SEQ",
-                    "username" type STRING means "로그인 ID",
-                    "name" type STRING means "회원 이름",
-                    "phoneNumber" type STRING means "회원 전화번호" isOptional true,
-                    "createdAt" type STRING means "회원 생성일자" formattedAs DocsFormatter.DATETIME defaultValue datetimeNowToString(),
-                    "updatedAt" type STRING means "회원 수정일자" formattedAs DocsFormatter.DATETIME defaultValue datetimeNowToString(),
-                    "imageUrl" type STRING means "회원 프로필 URL" isOptional true
+        mockMvc.perform(RestDocumentationRequestBuilders.get(api.path, username))
+            .andDo(
+                buildDocument(
+                    documentPath = api.documentPath,
+                    pathParameters("username" means "로그인 ID"),
+                    buildResponseFields(
+                        "id" type NUMBER means "회원 SEQ",
+                        "username" type STRING means "로그인 ID",
+                        "name" type STRING means "회원 이름",
+                        "phoneNumber" type STRING means "회원 전화번호" isOptional true,
+                        "createdAt" type STRING means "회원 생성일자" formattedAs DocsFormatter.DATETIME defaultValue datetimeNowToString(),
+                        "updatedAt" type STRING means "회원 수정일자" formattedAs DocsFormatter.DATETIME defaultValue datetimeNowToString(),
+                        "imageUrl" type STRING means "회원 프로필 URL" isOptional true
+                    )
                 )
             )
-        )
 
     }
 }

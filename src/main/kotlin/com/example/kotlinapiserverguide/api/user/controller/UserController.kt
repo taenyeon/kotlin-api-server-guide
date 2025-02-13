@@ -22,7 +22,7 @@ class UserController(
     val log = logger()
 
     @GetMapping("")
-    fun my(): ApiResponse<MemberDto> {
+    fun info(): ApiResponse<MemberDto> {
         return ApiResponse(userService.getUser())
     }
 

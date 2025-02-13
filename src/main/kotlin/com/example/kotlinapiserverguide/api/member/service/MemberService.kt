@@ -21,7 +21,6 @@ class MemberService(
     // mapStruct
     private val memberDtoMapper: MemberDtoMapper = Mappers.getMapper(MemberDtoMapper::class.java)
 
-
     // Entity
     fun addMember(member: Member): Long {
         checkExistMember(member.username!!)
@@ -37,15 +36,8 @@ class MemberService(
     }
 
     fun findMember(username: String): Member {
-        log.info("username : $username")
         return memberRepository.findByUsername(username.encrypt())
             ?: throw ResponseException(ResponseCode.NOT_FOUND_ERROR)
-    }
-
-    fun checkExistMember(username: String) {
-        if (memberRepository.findByUsername(username.encrypt()) != null) {
-            throw ResponseException(ResponseCode.EXIST_MEMBER)
-        }
     }
 
     fun findMember(id: Long): Member {
@@ -60,5 +52,12 @@ class MemberService(
 
     fun findMemberDto(id: Long): MemberDto {
         return memberDtoMapper.toDto(findMember(id))
+    }
+
+    // Validate
+    fun checkExistMember(username: String) {
+        if (memberRepository.findByUsername(username.encrypt()) != null) {
+            throw ResponseException(ResponseCode.EXIST_MEMBER)
+        }
     }
 }
