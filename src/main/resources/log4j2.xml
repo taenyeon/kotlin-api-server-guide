@@ -29,6 +29,9 @@
         <logger name="org.hibernate.SQL" level="DEBUG" additivity="false" >
             <AppenderRef ref="ConsoleAppender" />
         </logger>
+        <Logger name="org.springframework.jdbc.datasource.init.ScriptUtils" level="DEBUG" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+        </Logger>
         <Root level="INFO">
             <AppenderRef ref="ConsoleAppender" />
         </Root>

@@ -1,0 +1,39 @@
+### variable
+@path = {{host}}/api/user
+
+### login
+POST {{path}}/login
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test"
+}
+> {%
+    client.global.set("accessToken", response.body.body.accessToken)
+    client.global.set("refreshToken", response.body.body.refreshToken)
+%}
+
+### logout
+DELETE {{path}}/logout
+Authorization: {{accessToken}}
+
+> {%
+    client.global.clear("accessToken")
+    client.global.clear("refreshToken")
+%}
+
+### refresh accessToken
+POST {{path}}/accessToken
+Authorization: {{accessToken}}
+Content-Type: application/json
+
+{
+  "accessToken": "{{accessToken}}",
+  "refreshToken": "{{refreshToken}}"
+}
+> {%
+    client.global.set("accessToken", response.body.body.accessToken)
+    client.global.set("refreshToken", response.body.body.refreshToken)
+%}
+

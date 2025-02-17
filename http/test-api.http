@@ -1,0 +1,4 @@
+@path = {{host}}/api/test
+
+### test
+GET {{path}}

@@ -5,6 +5,7 @@ import com.example.kotlinapiserverguide.common.http.domain.ApiResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 @RestController
@@ -21,8 +22,8 @@ class TestController {
                 username = "test",
                 name = "test",
                 phoneNumber = "01011111111",
-                createdAt = "2024/08/28 13:00:00",
-                updatedAt = "2024/08/28 13:00:00",
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
                 imageUrl = "http://localhost:8000",
             )
         )

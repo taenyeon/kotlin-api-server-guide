@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.ResultActions
+import java.time.LocalDateTime
 
 @WebMvcTest(controllers = [MemberController::class], useDefaultFilters = false)
 @Import(MemberController::class)
@@ -40,8 +41,8 @@ class MemberControllerDocs : BaseDocs() {
                     username = "test",
                     name = "test",
                     phoneNumber = "01011111111",
-                    createdAt = "2024-01-01 00:00:00",
-                    updatedAt = "2024-01-01 00:00:00",
+                    createdAt = LocalDateTime.now(),
+                    updatedAt = LocalDateTime.now(),
                     imageUrl = "https://~~.com"
                 )
             )

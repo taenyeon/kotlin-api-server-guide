@@ -32,7 +32,7 @@ internal class LoginTest : DescribeSpec({
 
         }
         context("비밀번호가 일치하지 않으면") {
-            every { memberService.findMember("test") } throws ResponseException(ResponseCode.NOT_FOUND_ERROR)
+            every { memberService.findMember("test") } returns member
 
             it("[ERROR] WRONG_PASSWORD_ERROR") {
                 val loginRequest = LoginRequest()
@@ -65,7 +65,7 @@ internal class LoginTest : DescribeSpec({
         private var member = Member(
             1,
             "test",
-            "test",
+            "\$2a\$10\$TufC8ijEnWjw1TVp726LtugLZprXyCeaIYotDV8i2bKHpa.jmqNVO",
             "test",
             "01011111111",
             null

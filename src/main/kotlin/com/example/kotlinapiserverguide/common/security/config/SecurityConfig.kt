@@ -61,6 +61,8 @@ class SecurityConfig(private val jwtAuthenticationProvider: JwtAuthenticationPro
             "/error",
             "/api/user/accessToken",
             "/api/test/**",
+            "/docs/**",
+            "/favicon.ico",
 
         )
             .permitAll()

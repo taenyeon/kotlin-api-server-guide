@@ -1,0 +1,8 @@
+### variable
+@path = {{host}}/api/member
+@username = test
+
+### get member info (using username)
+GET {{path}}/{{username}}
+Authorization: {{accessToken}}
+

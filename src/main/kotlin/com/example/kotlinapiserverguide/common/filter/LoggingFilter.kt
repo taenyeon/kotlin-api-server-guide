@@ -23,7 +23,8 @@ class LoggingFilter : Filter {
     private val objectMapper: ObjectMapper = ObjectMapper()
     private val excludeList: List<String> = listOf(
         "application/javascript",
-        "text/html"
+        "text/html",
+        "image/x-icon",
     )
 
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
@@ -106,22 +107,23 @@ class LoggingFilter : Filter {
 
     private fun getResponseBody(response: HttpServletResponse): Map<String, Any?>? {
         var payload: String? = null
+
         val wrapper = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper::class.java)
         if (wrapper != null) {
             val buffer: ByteArray = wrapper.contentAsByteArray
             if (buffer.isNotEmpty()) {
                 payload = buffer.toString(Charsets.UTF_8)
                 wrapper.copyBodyToResponse()
+
+                if (response.contentType != null) {
+                    val isMatch: Boolean = excludeList.stream()
+                        .anyMatch { exclude -> response.contentType.contains(exclude) }
+                    if (isMatch) return null
+                }
+
                 return objectMapper.readValue<Map<String, Any?>>(payload)
             }
         }
-            if (response.contentType != null) {
-                val isMatch: Boolean = excludeList.stream()
-                    .anyMatch { exclude -> response.contentType.contains(exclude) }
-                if (isMatch) {
-                    return null
-                }
-            }
         return null
     }
 

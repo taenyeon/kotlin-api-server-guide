@@ -5,7 +5,7 @@ import au.com.console.kassava.kotlinHashCode
 import au.com.console.kassava.kotlinToString
 
 class JoinResponse(
-    var id: Long
+    var id: Long,
 ) {
 
     override fun toString() = kotlinToString(properties = toStringProperties)

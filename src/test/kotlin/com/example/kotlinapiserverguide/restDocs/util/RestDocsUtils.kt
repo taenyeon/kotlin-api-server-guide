@@ -15,6 +15,7 @@ import org.springframework.restdocs.payload.RequestFieldsSnippet
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.snippet.Attributes.attributes
 import org.springframework.restdocs.snippet.Snippet
+import java.lang.System.Logger
 
 
 class RestDocsUtils {
@@ -25,8 +26,9 @@ class RestDocsUtils {
 
 
     companion object {
-
+        private val log = logger()
         fun buildDocument(documentPath: String, vararg snippets: Snippet): RestDocumentationResultHandler {
+            log.info("buildDocument: $documentPath")
             return document(
                 documentPath,
                 DEFAULT_DOCUMENT_REQUEST,

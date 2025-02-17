@@ -9,9 +9,9 @@ import java.time.LocalDateTime
 @MappedSuperclass
 abstract class BaseTimeEntity {
 
-    @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy/mm/dd HH:mm:ss")
     lateinit var createdAt: LocalDateTime
-    @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy/mm/dd HH:mm:ss")
     lateinit var updatedAt: LocalDateTime
 
     @PrePersist

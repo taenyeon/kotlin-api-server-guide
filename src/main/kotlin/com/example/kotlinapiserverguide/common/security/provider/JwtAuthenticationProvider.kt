@@ -3,6 +3,7 @@ package com.example.kotlinapiserverguide.common.security.provider
 import com.example.kotlinapiserverguide.api.member.service.MemberCacheService
 import com.example.kotlinapiserverguide.api.user.domain.mapper.UserMapper
 import com.example.kotlinapiserverguide.common.exception.ResponseException
+import com.example.kotlinapiserverguide.common.function.logger
 import com.example.kotlinapiserverguide.common.http.constant.ResponseCode
 import com.example.kotlinapiserverguide.common.security.constant.TokenStatus
 import jakarta.servlet.FilterChain
@@ -24,7 +25,7 @@ class JwtAuthenticationProvider(
     private val userMapper: UserMapper = Mappers.getMapper(UserMapper::class.java)
 
     companion object {
-        const val ACCESS_TOKEN_NAME = "access_token"
+        const val ACCESS_TOKEN_NAME = "Authorization"
         const val REFRESH_TOKEN_NAME = "refresh_token"
         const val TOKEN_STATUS_HEADER = "token_status"
         const val TEST_TOKEN_NAME = "is_test"
@@ -49,7 +50,6 @@ class JwtAuthenticationProvider(
                 when (tokenStatus) {
                     TokenStatus.ALLOW -> {
                         allow(accessToken)
-                        
                     }
 
                     TokenStatus.EXPIRED -> expired()

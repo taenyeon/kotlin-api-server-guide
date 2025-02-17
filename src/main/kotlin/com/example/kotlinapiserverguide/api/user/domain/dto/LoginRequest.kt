@@ -4,7 +4,7 @@ import au.com.console.kassava.kotlinEquals
 import au.com.console.kassava.kotlinHashCode
 import au.com.console.kassava.kotlinToString
 
-class LoginRequest{
+class LoginRequest {
     lateinit var username: String
     lateinit var password: String
 

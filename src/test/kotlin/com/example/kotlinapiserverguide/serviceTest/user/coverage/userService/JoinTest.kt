@@ -17,6 +17,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 internal class JoinTest : DescribeSpec({
 
     describe("유저 생성") {
+        context("생성 성공") {
+            every { memberService.checkExistMember("test") } returns Unit
+            every { memberService.addMember(Member(null, "test", "test", "test", "01011111111", null)) } returns 1
+            val joinRequest = JoinRequest()
+            joinRequest.username = "test"
+            joinRequest.name = "test"
+            joinRequest.password = "test"
+            joinRequest.phoneNumber = "01011111111"
+
+            it("SUCCESS") {
+                userService.join(joinRequest).id shouldBe 1
+            }
+        }
         context("이미 같은 username의 회원이 존재한다면") {
 
             every { memberService.checkExistMember("test") } throws (ResponseException(ResponseCode.EXIST_MEMBER))
@@ -30,19 +43,6 @@ internal class JoinTest : DescribeSpec({
             it("[ERROR] EXIST_MEMBER_ERROR") {
                 shouldThrow<ResponseException> { userService.join(joinRequest) }
                     .responseCode shouldBe ResponseCode.EXIST_MEMBER
-            }
-        }
-
-        context("생성 성공") {
-
-            val joinRequest = JoinRequest()
-            joinRequest.username = "test2"
-            joinRequest.name = "test2"
-            joinRequest.password = "test2"
-            joinRequest.phoneNumber = "01011111111"
-
-            it("SUCCESS") {
-                userService.join(joinRequest).id shouldBe 1
             }
         }
     }

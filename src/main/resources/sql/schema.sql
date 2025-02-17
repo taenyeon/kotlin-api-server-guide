@@ -1,5 +1,3 @@
-create schema test;
-use test;
 create table member
 (
     id           bigint primary key auto_increment comment 'SEQ',

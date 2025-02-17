@@ -36,6 +36,7 @@ class UserService(
     fun join(joinRequest: JoinRequest): JoinResponse {
         memberService.checkExistMember(joinRequest.username)
         val member = joinRequestMapper.toEntity(joinRequest)
+        log.info("member: {}, password : {}",member, member.password )
         return JoinResponse(memberService.addMember(member))
     }
 

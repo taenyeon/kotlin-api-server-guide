@@ -64,21 +64,14 @@ dependencies {
     // JSON PARSING
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.3")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
-//    testImplementation("io.kotest:kotest-property")
 
     // TEST
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    // - SECURITY
-    testImplementation("org.springframework.security:spring-security-test")
-    // - REST_DOCS
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    // - MOCK
     testImplementation("io.mockk:mockk:1.9.3")
-    // - KOTEST
     testImplementation("io.kotest:kotest-runner-junit5-jvm:4.6.0")
 
     // MAPPING
@@ -90,7 +83,6 @@ dependencies {
     implementation("com.github.consoleau:kassava:2.1.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
 }
 
 configurations.forEach {
@@ -104,9 +96,7 @@ kotlin {
     }
 }
 
-// Kotlin QClass Setting
 kotlin.sourceSets.main {
-    println("kotlin sourceSets builDir:: $buildDir")
     setBuildDir("$buildDir")
 }
 
@@ -117,8 +107,6 @@ idea {
         generatedSourceDirs.add(kaptMain)
     }
 }
-
-
 
 allOpen {
     annotation("jakarta.persistence.Entity")
@@ -133,71 +121,58 @@ tasks.withType<Test>().configureEach {
 tasks.register<Test>("jacocoTest") {
     group = "verification"
     description = "only jacoco tests"
-
     testClassesDirs = sourceSets["test"].output.classesDirs
     classpath = sourceSets["test"].runtimeClasspath
-
     include("**/coverage/**")
+}
 
-    extensions.configure(JacocoTaskExtension::class.java) {
-        destinationFile = file("$buildDir/jacoco/testOnly.exec")
+tasks.register<Test>("restDocsTest") {
+    group = "verification"
+    description = "Run tests for the restDocs directory"
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    include("**/com/example/kotlinapiserverguide/restDocs/docs/**")
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true
     }
 }
 
-// ascii docs
-val snippetsDir by extra { file("build/generated-snippets") }
-
 tasks {
-
     test {
-        outputs.dir(snippetsDir)
         finalizedBy(jacocoTestReport)
     }
 
     jacocoTestReport {
-//        val jacocoTest = tasks.filter { it.name == "jacocoTest" }.orNull
-//        if (jacocoTest != null) dependsOn(jacocoTest)
-
+        dependsOn("jacocoTest")
         executionData(fileTree(buildDir).include("jacoco/*.exec"))
         reports {
             html.required = true
             xml.required = false
             csv.required = false
-            val excludes = mutableListOf<String>(
-                "**/dto/*",
-                "**/entity/*",
-                "**/common/filter/*"
-            )
-
             classDirectories.setFrom(
                 sourceSets.main.get().output.asFileTree.matching {
-                    exclude(excludes)
+                    exclude("**/dto/*", "**/entity/*", "**/common/filter/*")
                 }
             )
         }
+    }
 
-//        jacocoTestCoverageVerification{
-//            violationRules {
-//                rule {
-//                    element = "CLASS"
-//                    limit {
-//                        counter = "BRANCH"
-//                        value = "COVEREDRATIO"
-//                        minimum = BigDecimal.valueOf(0.40)
-//                    }
-//                }
-//            }
-//        }
+    val snippetsDir by extra { file("build/generated-snippets") }
+
+    val generateDocs by registering {
+        group = "documentation"
+        dependsOn("restDocsTest")
+        finalizedBy(asciidoctor)
     }
 
     asciidoctor {
-        dependsOn(test)
-
+        outputs.dir(snippetsDir)
         doFirst {
             delete(file("src/main/resources/static/docs"))
         }
         inputs.dir(snippetsDir)
-
         doLast {
             copy {
                 from("build/docs/asciidoc")
@@ -209,5 +184,10 @@ tasks {
     build {
         dependsOn(asciidoctor)
     }
+
+    bootJar {
+        dependsOn(asciidoctor)
+    }
 }
 
+gradle.startParameter.isParallelProjectExecutionEnabled = true

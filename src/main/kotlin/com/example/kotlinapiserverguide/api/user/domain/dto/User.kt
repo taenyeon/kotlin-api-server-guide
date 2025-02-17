@@ -7,19 +7,11 @@ import java.time.LocalDateTime
 
 class User(
     var id: Long? = 0,
-
     private var username: String,
-
     private var password: String,
-
     var name: String,
-
     var phoneNumber: String,
-
-    @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
     var createdAt: LocalDateTime,
-
-    @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
     var updatedAt: LocalDateTime,
     var imageUrl: String?,
 ) : UserDetails {

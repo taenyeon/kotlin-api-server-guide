@@ -7,6 +7,7 @@ import com.example.kotlinapiserverguide.api.user.domain.dto.JwtToken
 import com.example.kotlinapiserverguide.api.user.domain.dto.LoginRequest
 import com.example.kotlinapiserverguide.api.user.service.UserService
 import com.example.kotlinapiserverguide.common.exception.ResponseException
+import com.example.kotlinapiserverguide.common.function.encrypt
 import com.example.kotlinapiserverguide.common.function.logger
 import com.example.kotlinapiserverguide.common.function.user
 import com.example.kotlinapiserverguide.common.http.constant.ResponseCode

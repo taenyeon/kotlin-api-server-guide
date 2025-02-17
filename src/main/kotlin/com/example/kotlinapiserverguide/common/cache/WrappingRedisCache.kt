@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.data.redis.cache.RedisCache
 import org.springframework.data.redis.cache.RedisCacheConfiguration
 import org.springframework.data.redis.cache.RedisCacheWriter
+import java.nio.charset.StandardCharsets
 
 
 class WrappingRedisCache(

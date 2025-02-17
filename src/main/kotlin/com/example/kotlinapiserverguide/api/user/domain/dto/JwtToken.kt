@@ -1,6 +1,6 @@
 package com.example.kotlinapiserverguide.api.user.domain.dto
 
-class JwtToken{
+class JwtToken {
     lateinit var accessToken: String
     lateinit var refreshToken: String
 
@@ -8,7 +8,8 @@ class JwtToken{
     constructor(refreshToken: String) {
         this.refreshToken = refreshToken
     }
-    constructor(accessToken:String, refreshToken:String) {
+
+    constructor(accessToken: String, refreshToken: String) {
         this.accessToken = accessToken
         this.refreshToken = refreshToken
     }

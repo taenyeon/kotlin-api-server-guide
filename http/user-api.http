@@ -1,0 +1,40 @@
+### variable
+@path = {{host}}/api/user
+
+### get users info
+GET {{path}}
+Authorization: {{accessToken}}
+
+### join
+POST {{path}}/join
+Content-Type: application/json
+
+{
+  "username": "test2",
+  "password": "test2",
+  "name": "test2",
+  "phoneNumber": "01022222222"
+}
+
+### login
+POST {{path}}/login
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test"
+}
+
+### logout
+DELETE {{path}}/logout
+Authorization: {{accessToken}}
+
+### refresh accessToken
+POST {{path}}/accessToken
+Authorization: {{accessToken}}
+Content-Type: application/json
+
+{
+  "accessToken": "{{accessToken}}",
+  "refreshToken": "{{refreshToken}}"
+}
